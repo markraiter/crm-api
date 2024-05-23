@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  scylla_db:
+    image: scylladb/scylla
+    ports:
+      - "9042:9042"
+    environment:
+      SCYLLA_DC: datacenter1
+      SCYLLA_RACK: rack1
+
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - scylla_db
+      - redis
+    environment:
+      - SCYLLA_DB_URL=scylla_db
+      - REDIS_URL=redis://redis:6379/
